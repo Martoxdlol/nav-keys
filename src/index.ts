@@ -189,7 +189,7 @@ class NavKeysController {
 
                     if (this.options.allowHashchange) {
                         //new pushed url
-                        this.url = location.href
+                        this.url = window.location.href
                         //The event new location is different on navigate event and only on navigate event
                         customEventData.location = new URL(this.url)
                     }
