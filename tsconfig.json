@@ -10,6 +10,7 @@
         "outDir": "dist"
     },
     "exclude": [
-        "webpack.config.js"
+        "webpack.config.js",
+        "./dist/*"
     ]
 }
