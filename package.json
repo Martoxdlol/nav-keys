@@ -11,6 +11,11 @@
     "dev": "npx webpack serve",
     "prepublish": "npm run build"
   },
+  "browserslist": [
+    "last 1 version",
+    "> 1%",
+    "not dead"
+  ],
   "keywords": [
     "history",
     "navigation",

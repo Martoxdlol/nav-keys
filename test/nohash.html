@@ -6,7 +6,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NavKeysController TEST PAGE</title>
-    <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
     <script src="/bundle.js"></script>
 </head>
 
@@ -18,19 +17,12 @@
     </pre>
     <button onclick="history2.enableForwardButton()">Enable forward</button>
     <button onclick="history2.disableForwardButton()">Disable forward</button>
-    <!-- Polyfill for old browsers -->
     <script>
         let i = 0
         function log(data) {
             i++
             const d = (new Date()).toTimeString().split(" ")[0]
-            try {
-                document.getElementById('debug-list').innerText += i + " [" + d + "] " + JSON.stringify(data) + "\n"
-            } catch (error) {
-                // PROBABLY IE
-                document.getElementById('debug-list').innerText += i + " [" + d + "] " + JSON.stringify(data + "") + "\n"
-
-            }
+            document.getElementById('debug-list').innerText += i + " [" + d + "] " + JSON.stringify(data) + "\n"
             console.log(data)
         }
 
@@ -45,7 +37,7 @@
 
 
     <script>
-        var history2 = new NavKeysController(window.history)
+        var history2 = new NavKeysController(window.history, { allowHashchange: false })
 
         log(history2)
 

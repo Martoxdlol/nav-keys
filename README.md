@@ -13,7 +13,12 @@ It can:
 ```javascript
 import NavKeysController from 'nav-keys'
 
-const controller = new NavKeysController(window.history)
+const options = {
+    allowHashchange: true // by default it won't prevent hashchange and will emit an event
+    listenHashchange: true // by default it will emit hashchange events
+}
+
+const controller = new NavKeysController(window.history, options) // both params are optional
 
 controller.url = 'home'
 
@@ -44,4 +49,17 @@ controller.listen(e => {
 })
 
 // Listeners behaviour is like a stack
+```
+
+## Internet Explorer Compatibility
+
+```html
+    <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
+    <script src="nav-keys.js"></script>
+
+    <script>
+
+    var controller = new NavKeysController(window.history)
+    
+    </script>
 ```

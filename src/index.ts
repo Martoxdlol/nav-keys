@@ -1,28 +1,29 @@
 type Options = {
-
+    initialUrl?: Location
+    allowHashchange: boolean
+    listenHashchange: boolean
 }
 
 const DEFAULT_OPTIONS: Options = {
-
+    allowHashchange: true,
+    listenHashchange: true,
 }
 
 enum Action {
     forward = "forward",
     back = "back",
     hashchange = "hashchange",
-
 }
 
-type CustomEventData = {
+type NavigationEvent = {
     action: Action
-    lastLocation: Location
-    location: Location
+    location: URL
     isHashChange: boolean
     stopPropagation?: Function
 }
 
 type CreatePromiseResult = {
-    promise: Promise<any>
+    promise: Promise<void>
     resolver: Function
 }
 
@@ -36,26 +37,25 @@ function createPromise(): CreatePromiseResult {
     }
 }
 
-
 class NavKeysController {
-    //General purpose options
+    // General purpose options
     readonly options: Options
 
-    //Browser real history
+    // Browser real history
     private originalHistory: History
 
-    //Store last location info
-    private lastLocation: Location
-
-    //toggle this on when popstate event is espected to happen
+    // toggle this on when popstate event is espected to happen
     //0 == false
     private ignoreEvent: number
 
-    //keeps track of forward button enable state
+    // keeps track of forward button enable state
     private forwardButtonEnabled: boolean
 
-    //awaiting this ensures that native history events finished it cycle. Also, handles popstate event
+    // awaiting this ensures that native history events finished it cycle. Also, handles popstate event
     private waitEventTrigger: Function
+
+    // Actual location/url
+    private _url: URL
 
     // Event listeners set
     private listeners: Set<Function>
@@ -67,13 +67,17 @@ class NavKeysController {
     constructor(originalHistory: History = window.history, options) {
         this.options = { ...DEFAULT_OPTIONS, ...options }
         this.originalHistory = originalHistory
-        this.lastLocation = { ...location }
         this.ignoreEvent = 0
         this.forwardButtonEnabled = false
         this.listeners = new Set()
+        this._url = new URL(window.location.toString())
+
+        if (this.options.initialUrl) {
+            this._url = options.initialLocation
+        }
 
         //Inicializar sistema
-        this.initHistory()
+        this.initHistory(this._url.href)
 
         //handles popstate event
         this.waitEventTrigger = this.handleEvent()
@@ -82,14 +86,16 @@ class NavKeysController {
         this._nextUrl = null
     }
 
-    private initHistory() {
+    private initHistory(initialUrl: string) {
         // HISTORY STATES: [ state = {pos: 0 } ]       [ state = {pos: 1 } ]             [ state = {pos: 2 } ]   => the last block can be romeved to disable forward button
         //       USED TO DETECT BACK                  KEEP TEH USER ALLWAYS HERE        USED TO DETECT FORWARD
         // If user goes back: the event handler will detect pos = 0 and take action as back event
         // If user goes forward: the event handler will detect pos = 2 and take action as forward event
         // If user use hash navigation: the event handler will detect pos = undefined and take action as navigate event
-        this.originalHistory.replaceState({ pos: 0 }, '')
-        this.originalHistory.pushState({ pos: 1 }, '')
+        this.originalHistory.replaceState({ pos: 0 }, '', initialUrl)
+        this.originalHistory.pushState({ pos: 1 }, '', initialUrl)
+
+        this.originalHistory.scrollRestoration = 'manual'
     }
 
     async enableForwardButton() {
@@ -133,22 +139,20 @@ class NavKeysController {
     }
 
     get url() {
-        if (this._nextUrl) return new URL(this._nextUrl.toString(), location.href.toString())
-        else return new URL(location.href)
+        return this._url
     }
 
     set url(url: URL | string) {
+        this._url = new URL(url.toString(), this._url)
         if (this.ignoreEvent) {
-            this._nextUrl = new URL(url.toString(), this.url.toString())
+            this._nextUrl = this._url
         } else {
             //Replace url
             this.originalHistory.replaceState(this.originalHistory.state, '', url.toString())
-            //Update saved location
-            this.lastLocation = { ...location }
         }
     }
 
-    private launchEvent(action: Action, customEventData: CustomEventData): void {
+    private launchEvent(action: Action, customEventData: NavigationEvent): void {
         customEventData.action = action
         const list = Array.from(this.listeners.values())
         let cb = list.pop()
@@ -176,14 +180,20 @@ class NavKeysController {
             //User triggered event
             const newPos = this.originalHistory.state && this.originalHistory.state.pos
             if (!this.ignoreEvent && newPos != 1) {
-                const customEventData: CustomEventData = { lastLocation: { ...this.lastLocation }, location: { ...location }, isHashChange: false, action: null }
+                const customEventData: NavigationEvent = { location: new URL(this.url.toString()), isHashChange: false, action: null }
 
-                //Push state / navigate event / hash change
+                // Push hash
                 if (!this.originalHistory.state || this.originalHistory.state.pos == undefined || this.originalHistory.state.pos == null) {
                     //Prevent handler from doing strange stuff
                     this.ignoreEvent++
-                    //new pushed url
-                    this.url = location.href
+
+                    if (this.options.allowHashchange) {
+                        //new pushed url
+                        this.url = location.href
+                        //The event new location is different on navigate event and only on navigate event
+                        customEventData.location = new URL(this.url)
+                    }
+
                     //return to pos 1 from pos undefined ==> 2
                     this.originalHistory.back()
                     //wait back event finish
@@ -192,16 +202,16 @@ class NavKeysController {
                     //Actually the only way this event is trigerred by popstate is by a hashchange
                     customEventData.isHashChange = true
 
-                    //Launch event
-                    this.launchEvent(Action.hashchange, customEventData)
+                    if (this.options.listenHashchange) {
+                        //Launch event
+                        this.launchEvent(Action.hashchange, customEventData)
+                    }
 
                     // Disable forward if neccesary
                     if (!this.forwardButtonEnabled) this.disableForwardButton()
 
                     //end prevent handler from doing strange stuff
                     this.ignoreEvent--
-                    //The event new location is different on navigate event and only on navigate event
-                    customEventData.location = { ...location }
                 }
                 //Forward event
                 else if (this.originalHistory.state.pos == 2) {
@@ -216,7 +226,7 @@ class NavKeysController {
                 //Backward event
                 else if (this.originalHistory.state.pos == 0) {
                     //Use last known location, don't change url
-                    const href = this.lastLocation.href
+                    const href = this._url.href
                     //this.originalHistory.pushState ( back state )
                     this.originalHistory.pushState({ pos: 1 }, '', href)
                     // Reenable forward button
@@ -229,8 +239,6 @@ class NavKeysController {
                 //Reset value
                 this._nextUrl = null
                 //Save new location
-                this.lastLocation = { ...location }
-
                 if (this._disableForward) {
                     await this._disableForwardButton()
                     this._disableForward = false
@@ -261,14 +269,6 @@ class NavKeysController {
         return waitEventTrigger
     }
 
-}
-
-declare global {
-    interface Window { NavKeysController: any; }
-}
-
-if (process.env.NODE_ENV === 'development') {
-    window.NavKeysController = NavKeysController
 }
 
 export default NavKeysController
