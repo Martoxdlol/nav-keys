@@ -2,7 +2,7 @@ const path = require('path');
 
 module.exports = (env) => {
     return {
-        entry: env.production ? './src/web.ts' : './src/index.ts',
+        entry: './src/web.ts',
         mode: env.production ? 'production' : 'development',
         module: {
             rules: [
@@ -26,6 +26,9 @@ module.exports = (env) => {
             },
             compress: true,
             port: 8080,
+            historyApiFallback: {
+                index: 'index.html'
+            },
         },
     }
 };
