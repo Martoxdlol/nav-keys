@@ -1,6 +1,6 @@
 {
   "name": "nav-keys",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Control of browser back and forward navigation keys",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

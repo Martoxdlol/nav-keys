@@ -9,6 +9,9 @@ const DEFAULT_OPTIONS: Options = {
     listenHashchange: true,
 }
 
+// Why not
+export { DEFAULT_OPTIONS }
+
 enum Action {
     forward = "forward",
     back = "back",
@@ -64,7 +67,7 @@ class NavKeysController {
     private _nextUrl?: URL
     private _disableForward: boolean
 
-    constructor(originalHistory: History = window.history, options) {
+    constructor(originalHistory: History = window.history, options?) {
         this.options = { ...DEFAULT_OPTIONS, ...options }
         this.originalHistory = originalHistory
         this.ignoreEvent = 0
