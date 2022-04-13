@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+        "allowJs": false,
+        "noImplicitAny": false,
+        "target": "ES5",
+        "declaration": true,
+        "declarationMap": true,
+        "declarationDir": "dist",
+        "rootDir": "src",
+        "outDir": "dist"
+    },
+    "exclude": [
+        "webpack.config.js"
+    ]
+}
