@@ -11,6 +11,8 @@
     },
     "exclude": [
         "webpack.config.js",
-        "./dist/*"
+        "src/web.ts",
+        "./dist/*",
+        "./dist_web/*"
     ]
 }

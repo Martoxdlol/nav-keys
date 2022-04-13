@@ -4,8 +4,9 @@
   "description": "Control of browser back and forward navigation keys",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "repository": "https://github.com/Martoxdlol/nav-keys",
   "scripts": {
-    "build_web": "npx webpack",
+    "build_web": "npx webpack --env production",
     "build": "tsc",
     "dev": "npx webpack serve",
     "prepublish": "npm run build"
@@ -17,7 +18,7 @@
     "keys"
   ],
   "author": "Tomás Cichero <martoxdlol@gmail.com>",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "ts-loader": "^9.2.8",
     "typescript": "^4.6.3",
