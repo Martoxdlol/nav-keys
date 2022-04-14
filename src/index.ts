@@ -191,6 +191,10 @@ class NavKeysController {
         this.originalHistory.back()
     }
 
+    public get isForwardButtonEnabled() {
+        return this.forwardButtonEnabled
+    }
+
     private handleEvent() {
         let { promise: waitEventPromise, resolver: waitEventPromiseResovler }: CreatePromiseResult = createPromise()
 
