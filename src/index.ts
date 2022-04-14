@@ -66,6 +66,7 @@ class NavKeysController {
     // Temporal variables used on event trigger cycle
     private _nextUrl?: URL
     private _disableForward: boolean
+    private _enableForward: boolean
 
     constructor(originalHistory: History = window.history, options?) {
         this.options = { ...DEFAULT_OPTIONS, ...options }
@@ -101,8 +102,7 @@ class NavKeysController {
         this.originalHistory.scrollRestoration = 'manual'
     }
 
-    async enableForwardButton() {
-        if (this.forwardButtonEnabled) return
+    async _enableForwardButton() {
         //Prevent handler from doing strange stuff
         this.ignoreEvent++
         //Ensure there are a 3rd block (pos: 2)
@@ -115,6 +115,14 @@ class NavKeysController {
         this.forwardButtonEnabled = true
         //
         this.ignoreEvent--
+    }
+
+    async enableForwardButton() {
+        if (this.ignoreEvent) {
+            this._enableForward = true
+        } else {
+            await this._enableForwardButton()
+        }
     }
 
     private async _disableForwardButton() {
@@ -252,6 +260,9 @@ class NavKeysController {
                 if (this._disableForward) {
                     await this._disableForwardButton()
                     this._disableForward = false
+                } else if (this._enableForward) {
+                    await this._enableForwardButton()
+                    this._enableForward = false
                 }
             }
 
