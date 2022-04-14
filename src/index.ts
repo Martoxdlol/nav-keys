@@ -191,7 +191,7 @@ class NavKeysController {
         this.originalHistory.back()
     }
 
-    public get isForwardButtonEnabled() {
+    get isForwardButtonEnabled() {
         return this.forwardButtonEnabled
     }
 
