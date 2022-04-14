@@ -1,4 +1,4 @@
-type Options = {
+export type Options = {
     initialUrl?: Location
     allowHashchange: boolean
     listenHashchange: boolean
@@ -18,7 +18,7 @@ enum Action {
     hashchange = "hashchange",
 }
 
-type NavigationEvent = {
+export type NavigationEvent = {
     action: Action
     location: URL
     isHashChange: boolean
@@ -174,6 +174,12 @@ class NavKeysController {
         return () => {
             this.listeners.delete(callback)
         }
+    }
+
+    public exit() {
+        this.ignoreEvent++
+        this.originalHistory.back()
+        this.originalHistory.back()
     }
 
     private handleEvent() {
