@@ -102,6 +102,7 @@ class NavKeysController {
     }
 
     async enableForwardButton() {
+        if (this.forwardButtonEnabled) return
         //Prevent handler from doing strange stuff
         this.ignoreEvent++
         //Ensure there are a 3rd block (pos: 2)
