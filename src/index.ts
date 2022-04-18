@@ -207,7 +207,7 @@ export default class NavKeysController {
     }
 
     get isForwardButtonEnabled() {
-        return this._forwardButtonEnabledNext
+        return !!this._forwardButtonEnabledNext
     }
 }
 
