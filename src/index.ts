@@ -26,8 +26,8 @@ export type NavKeysOptions = {
     initialUrl?: string
     /* It calls last added listener first if enabled */
     callListenersAsStack?: boolean
-    allowHashchange: boolean
-    listenHashchange: boolean
+    allowHashchange?: boolean
+    listenHashchange?: boolean
 }
 
 
@@ -194,6 +194,10 @@ export default class NavKeysController {
         if (this._lastPos === 1) {
             this.nativeHistory.replaceState(this.nativeHistory.state, '', this._url)
         }
+    }
+
+    get url() {
+        return this._url
     }
 
     listen(listener: Function) {
