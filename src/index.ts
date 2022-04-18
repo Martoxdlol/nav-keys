@@ -34,6 +34,7 @@ export type NavKeysOptions = {
 export const DEFAULT_OPTIONS: NavKeysOptions = {
     allowHashchange: false,
     listenHashchange: true,
+    callListenersAsStack: false,
 }
 
 export enum Action {
