@@ -200,6 +200,15 @@ export default class NavKeysController {
         this.listeners.add(listener)
         return () => this.listeners.delete(listener)
     }
+
+    exit() {
+        this.nativeHistory.back()
+        this.nativeHistory.back()
+    }
+
+    get isForwardButtonEnabled() {
+        return this._forwardButtonEnabledNext
+    }
 }
 
 function initHistory(history: History, url: string) {
