@@ -49,21 +49,29 @@
 
         log(history2)
 
+        delayed(300, function () {
+            // history2.enableForwardButton()
+        })
+
+        // delayed(1400, function () {
+        //     history2.disableForwardButton()
+        // })
+
         history2.listen(function (e) {
             log(e)
         })
 
-        delayed(200, function () {
-            history2.url = "/a"
-        })
+        // delayed(200, function () {
+        //     history2.url = "/a"
+        // })
 
-        delayed(300, function () {
-            history.back()
-        })
+        // delayed(300, function () {
+        //     history.back()
+        // })
 
-        delayed(400, function () {
+        // delayed(400, function () {
 
-        })
+        // })
     </script>
 </body>
 
