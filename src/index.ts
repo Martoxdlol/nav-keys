@@ -216,6 +216,7 @@ export default class NavKeysController {
         this.nativeHistory.back()
 
         setTimeout(() => {
+            window.close()
             // If exit does not work, it will enable again the history
             initHistory(this.nativeHistory, this._url)
             window.addEventListener('popstate', this.eventHandlerBinded)
