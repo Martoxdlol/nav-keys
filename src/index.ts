@@ -214,6 +214,12 @@ export default class NavKeysController {
         this.nativeHistory.back()
         this.nativeHistory.back()
         this.nativeHistory.back()
+
+        setTimeout(() => {
+            // If exit does not work, it will enable again the history
+            initHistory(this.nativeHistory, this._url)
+            window.addEventListener('popstate', this.eventHandlerBinded)
+        }, 200)
     }
 
     get isForwardButtonEnabled() {
