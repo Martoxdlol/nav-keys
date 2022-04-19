@@ -61,6 +61,8 @@ export default class NavKeysController {
     private eventQueue: Array<NavKeyEvent> = []
 
     private listeners: Set<Function> = new Set()
+    // Event handled with bind(this)
+    private eventHandlerBinded: any
 
     constructor(history?: History, options?: NavKeysOptions) {
         options = { ...DEFAULT_OPTIONS, ...options }
@@ -90,7 +92,9 @@ export default class NavKeysController {
                 this.eventQueue.push({ action: Action.hashchange, url: new URL(u) })
             }
         }, false)
-        window.addEventListener('popstate', this.handleEvent.bind(this))
+
+        this.eventHandlerBinded = this.handleEvent.bind(this)
+        window.addEventListener('popstate', this.eventHandlerBinded)
     }
 
     private _lastPos: number = 1
@@ -206,6 +210,8 @@ export default class NavKeysController {
     }
 
     exit() {
+        window.removeEventListener('popstate', this.eventHandlerBinded)
+        this.nativeHistory.back()
         this.nativeHistory.back()
         this.nativeHistory.back()
     }
