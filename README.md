@@ -1,6 +1,8 @@
 Browser Navigation keys (⬅ ➡) controller
 =================
 
+**Please, if you can give me a ⭐ on GitHub. Also make me know of any bug, problem or something you need.**
+
 Full control of back and forward keys on browser
 
 It can:
